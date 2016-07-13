@@ -9,6 +9,7 @@
 #                                                         #
 #              Written by:  Tyler M Johnson               #
 #         https://github.com/yippieskippie24              #
+#                                                         #
 #*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
 
 #*#*#*#*#*#*#*#*#   Setup instructions    #*#*#*#*#*#*#*#*#
@@ -16,32 +17,39 @@
 # resides in the home folder of the user that runs it.    #
 # You will need to set the names of the variables         #
 # below to the FQDNs of the servers you want to be        #
-# accessible in this script.  You can edit the server     #
-# descriptions as needed below.                           #
+# accessible in this script.  You can also change the     #
+# ports as needed. You can edit the server descriptions   #
+# as needed below.                                        #
 #*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
 
 #editable Variables
 server1="server1-hostname"
 server1_desc="server1-descritpion"
+server1_port="22"
 
 server2="server2-hostname"
 server2_desc="server2-description"
+server2_port="22"
 
 server3="server3-hostname"
 server3_desc="server3-description"
+server3_port="22"
 
 server4="server4-hostname"
 server4_desc="server4-description"
+server4_port="22"
 
 server5="server5-hostname"
 server5_desc="server5-description"
+server5_port="22"
 
 server6="server6-hostname"
 server6_desc="server6-description"
+server6_port="22"
 
 server7="server7-hostname"
 server7_desc="server7-description"
-
+server7_port="22"
 
 #*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
 #                                                                    #
@@ -52,8 +60,9 @@ server7_desc="server7-description"
 
 #static variables
 
-customServer=""
+customSERVER=""
 serverSELECTION=""
+portSELECTION=""
 
 
 #MainMenu
@@ -70,31 +79,77 @@ function mainMenu() {
 		"Custom" "|  Connect to another server" \
 		"Advanced" "|  Advanced Menu" \
 		"Exit" "| Exit this script" 3>&1 1>&2 2>&3)
+	
+			SSH_port_picker
 
-	if [ "$serverSELECTION" = "Custom" ]; then
-			customServer=$(whiptail --inputbox "What is the FQDN of the server you want to connect to?" 8 78 --title "Custom server" 3>&1 1>&2 2>&3)
-			clear
-			echo connecting to $customServer...
-			ssh $customServer
-			~/ssh_connect.sh
 
+		if [ "$serverSELECTION" = "Custom" ]; then
+			customServer
 		elif [ "$serverSELECTION" = "Advanced" ]; then
-			echo advanced Menu
-			sleep 10
-			~/ssh_connect.sh
-
+			advanceMenu
 		elif [ "$serverSELECTION" = "Exit" ]; then
+			EXIT
+		else
+			SSH_connect
+		fi
+}
+
+function SSH_port_picker() {
+		if [ "$serverSELECTION" = "$server1" ]; then
+			portSELECTION=$server1_port
+		elif [ "$serverSELECTION" = "$server2" ]; then
+			portSELECTION=$server2_port
+		elif [ "$serverSELECTION" = "$server3" ]; then
+			portSELECTION=$server3_port
+		elif [ "$serverSELECTION" = "$server4" ]; then
+			portSELECTION=$server4_port
+		elif [ "$serverSELECTION" = "$server5" ]; then
+			portSELECTION=$server5_port
+		elif [ "$serverSELECTION" = "$server6" ]; then
+			portSELECTION=$server6_port
+		elif [ "$serverSELECTION" = "$server7" ]; then
+			portSELECTION=$server7_port
+		fi
+}
+
+function customServer() {
+			customSERVER=$(whiptail --inputbox "What is the FQDN of the server you want to connect to?" 8 78 --title "Custom server" 3>&1 1>&2 2>&3)
+			portSELECTION=$(whiptail --inputbox "What port do you want to connect on?" 8 78 22--title "Select Port" 3>&1 1>&2 2>&3)
+		if [ "$portSELECTION" = "22" ]; then
+			echo connecting to $customSERVER...
+			ssh $customSERVER
+			~/ssh_connect.sh
+		else
+			echo connecting to $customSERVER on port $portSELECTION...
+			ssh $customSERVER -p $portSELECTION
+			~/ssh_connect.sh
+		fi
+}
+
+function advanceMenu() {
+			echo "advanced Menu - More features will be added here later"
+			sleep 2
+			~/ssh_connect.sh
+}
+
+function EXIT() {
 			clear
 			echo exiting SSH Connect
 			exit
+}
 
-		else
+function SSH_connect() {
+		if [ "$portSELECTION" = "22" ]; then
 			echo connecting to $serverSELECTION...
 			ssh $serverSELECTION
 			~/ssh_connect.sh
-
-	fi
+		else
+			echo connecting to $serverSELECTION on port $portSELECTION...
+			ssh $serverSELECTION -p $portSELECTION
+			~/ssh_connect.sh
+		fi
 }
+
 
 #This section actually calls the mainMenu function
 
