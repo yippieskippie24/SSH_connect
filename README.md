@@ -11,15 +11,13 @@ The idea is you can quickly log into any server via SSH by first logging into yo
 * Setup static servers to connect to
 * Ability to specify a custom port to connect via SSH
 * In addition to static server entries you have the option to connect to a custom server (including port selection)
-
+* If running as root, force to not be root
+* Option to check if script is started automatically by new bash prompt, prompt to add if it's not
 
 The following features are planned:
 
-* If running as root, recommend to not be root
-* Check if script is started automatically by new bash prompt, prompt to add if it's not
 * Add option to run from every new bash shell or only from SSH connected bash shell
 * Aheck if SSH is installed, prompt to install if it's not
-* Areate a first run function that does a few checks and prompts to setup script. Can be re-run from advanced menu
 * Auto prompt to add SSH key to destination server if enabled
 * Add logging. Specifically to log timestamps for connections made. Also error logging.
 
