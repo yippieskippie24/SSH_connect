@@ -81,6 +81,8 @@ server10_port=
 customSERVER=""
 serverSELECTION=""
 portSELECTION=""
+userSELECTION=""
+advanceMenu_selection=""
 
 
 #Servers + descriptions Array
@@ -109,7 +111,9 @@ Exit "Exit this script" \
 mainMenuARRAY=("${servers[@]}" "${defaultmenu[@]}")
 
 
-#MainMenu
+#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
+#                         Main Menu Function                         #
+#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
 
 function mainMenu() {
 	serverSELECTION=$(whiptail --title "SSH Connect" --nocancel --menu "Choose Server to connect to:" 30 65 20 \
@@ -129,6 +133,10 @@ function mainMenu() {
 		fi
 }
 
+#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
+#                       SSH Port Picker Function                     #
+#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
+
 function SSH_port_picker() {
 		if [ "$serverSELECTION" = "$server1" ]; then
 			portSELECTION=$server1_port
@@ -144,8 +152,18 @@ function SSH_port_picker() {
 			portSELECTION=$server6_port
 		elif [ "$serverSELECTION" = "$server7" ]; then
 			portSELECTION=$server7_port
+		elif [ "$serverSELECTION" = "$server8" ]; then
+			portSELECTION=$server8_port
+		elif [ "$serverSELECTION" = "$server9" ]; then
+			portSELECTION=$server9_port
+		elif [ "$serverSELECTION" = "$server10" ]; then
+			portSELECTION=$server10_port
 		fi
 }
+
+#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
+#                        Custom Server Function                      #
+#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
 
 function customServer() {
 			customSERVER=$(whiptail --inputbox "What is the FQDN of the server you want to connect to?" 8 78 --title "Custom server" 3>&1 1>&2 2>&3)
@@ -154,19 +172,102 @@ function customServer() {
 		if [ "$portSELECTION" = "22" ]; then
 			echo connecting to $customSERVER...
 			ssh $customSERVER -l $userSELECTION
-			~/ssh_connect.sh
+			mainMenu
 		else
 			echo connecting to $customSERVER on port $portSELECTION...
 			ssh $customSERVER -p $portSELECTION -l $userSELECTION
-			~/ssh_connect.sh
+			mainMenu
 		fi
 }
 
-function advanceMenu() {
-			echo "advanced Menu - More features will be added here later"
-			sleep 2
-			~/ssh_connect.sh
+#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
+#                        SSH_connect Function                        #
+#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
+
+function SSH_connect() {
+		if [ "$portSELECTION" = "22" ]; then
+			echo connecting to $serverSELECTION...
+			ssh $serverSELECTION
+			mainMenu
+		else
+			echo connecting to $serverSELECTION on port $portSELECTION...
+			ssh $serverSELECTION -p $portSELECTION
+			mainMenu
+		fi
 }
+
+#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
+#                            Advance Menu                            #
+#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
+
+function advanceMenu() {
+advanceMenu_selection=$(whiptail --title "Advance Menu" --fb --menu "Advanced Options:" 30 78 20\
+			"Auto Start" "Configure SSH Connect to start automatically" \
+			"Exit" "Exit Advance Menu" 3>&1 1>&2 2>&3)
+		if [ "$advanceMenu_selection" = "Auto Start" ]; then
+			AUTOSTART
+		elif [ "$advanceMenu_selection" = "Exit" ]; then
+			mainMenu	
+		fi
+
+
+
+}
+
+
+#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
+#                Configure SSH Connect to autostart                  #
+#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
+
+function AUTOSTART() {
+	if grep -Fxq "#_**_#" .bashrc; then
+		whiptail --title "Auto Start setup" --fb --msgbox "SSH Connect is already configured for Auto Start." 10 78
+		advanceMenu
+	else
+		echo "" >> ~/.bashrc
+		echo "" >> ~/.bashrc
+		echo "" >> ~/.bashrc
+		echo "#_**_#" >> ~/.bashrc
+		echo "#^^ that tag is used by the ssh_connect.sh script.  It should be located in your home directory" >> ~/.bashrc
+		echo "#Start ssh_connect.sh when a new shell starts" >> ~/.bashrc
+		echo "~/ssh_connect.sh" >> ~/.bashrc
+		whiptail --title "Auto Start setup" --fb --msgbox "SSH Connect will now start with every new bash Shell." 10 78
+		advanceMenu
+	fi
+}
+
+#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
+#                This section moves the script to the home           #
+#                     folder of the current user                     #
+#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
+
+function runningINhome() {
+MY_PATH="`dirname \"$0\"`"              # relative
+MY_PATH="`( cd \"$MY_PATH\" && pwd )`"  # absolutized and normalized
+if [ -z "$MY_PATH" ] ; then
+  # error; for some reason, the path is not accessible
+  # to the script (e.g. permissions re-evaled after suid)
+  exit 1  # fail
+fi
+if [ $HOME != $MY_PATH ]; then
+        moveTOhome
+fi
+
+}
+#This sill move the script to the home folder of the current user.
+function moveTOhome() {
+        if (whiptail --title "Move script?" --fb --yesno "The script is designed to be run from your home directory.  Would you like to automatically move it there?" --no-button Exit 11 60 3>&1 1>&2 2>&3); then
+        mv $MY_PATH/ssh_connect.sh $HOME
+        whiptail --title "Re-Run Script" --fb --msgbox "The script is now located in your home directory:  $HOME" 10 78
+        EXIT
+        else
+        EXIT
+fi
+}
+
+#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
+#                            Exit function                           #
+#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
 
 function EXIT() {
 			clear
@@ -174,22 +275,29 @@ function EXIT() {
 			exit
 }
 
-function SSH_connect() {
-		if [ "$portSELECTION" = "22" ]; then
-			echo connecting to $serverSELECTION...
-			ssh $serverSELECTION
-			~/ssh_connect.sh
-		else
-			echo connecting to $serverSELECTION on port $portSELECTION...
-			ssh $serverSELECTION -p $portSELECTION
-			~/ssh_connect.sh
-		fi
+#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
+#                           Start Function                           #
+#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
+
+function START() {
+		## ROOT CHECK ##
+		if [[ $EUID -eq 0 ]];then
+    		whiptail --title "Running as root" --fb --msgbox "There's no need to run this script as root." --ok-button Exit 10 78
+			EXIT
+    	fi
+
+    	runningINhome
+
 }
 
 
-#This section actually calls the mainMenu function
+
+#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
+#                      Initial function calls                        #
+#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
 
 clear
+START
 mainMenu
 
 
