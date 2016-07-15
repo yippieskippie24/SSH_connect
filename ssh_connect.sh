@@ -201,7 +201,6 @@ function SSH_connect() {
 #*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
 
 function advanceMenu() {
-<<<<<<< master
 advanceMenu_selection=$(whiptail --title "Advance Menu" --fb --menu "Advanced Options:" 30 78 20\
 			"Auto Start" "Configure SSH Connect to start automatically" \
 			"Exit" "Exit Advance Menu" 3>&1 1>&2 2>&3)
@@ -235,63 +234,6 @@ function AUTOSTART() {
 		whiptail --title "Auto Start setup" --fb --msgbox "SSH Connect will now start with every new bash Shell." 10 78
 		advanceMenu
 	fi
-}
-
-#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
-#                This section moves the script to the home           #
-#                     folder of the current user                     #
-#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
-
-function runningINhome() {
-MY_PATH="`dirname \"$0\"`"              # relative
-MY_PATH="`( cd \"$MY_PATH\" && pwd )`"  # absolutized and normalized
-if [ -z "$MY_PATH" ] ; then
-  # error; for some reason, the path is not accessible
-  # to the script (e.g. permissions re-evaled after suid)
-  exit 1  # fail
-fi
-if [ $HOME != $MY_PATH ]; then
-        moveTOhome
-fi
-
-}
-#This sill move the script to the home folder of the current user.
-function moveTOhome() {
-        if (whiptail --title "Move script?" --fb --yesno "The script is designed to be run from your home directory.  Would you like to automatically move it there?" --no-button Exit 11 60 3>&1 1>&2 2>&3); then
-        mv $MY_PATH/ssh_connect.sh $HOME
-        whiptail --title "Re-Run Script" --fb --msgbox "The script is now located in your home directory:  $HOME" 10 78
-        EXIT
-        else
-        EXIT
-fi
-}
-
-#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
-#                            Exit function                           #
-#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
-
-function EXIT() {
-			clear
-			echo exiting SSH Connect
-			exit
-}
-
-#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
-#                           Start Function                           #
-#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
-
-function START() {
-		## ROOT CHECK ##
-		if [[ $EUID -eq 0 ]];then
-    		whiptail --title "Running as root" --fb --msgbox "There's no need to run this script as root." --ok-button Exit 10 78
-			EXIT
-    	fi
-
-    	runningINhome
-
-=======
-whiptail --title "Advance Menu" --fb --msgbox "Additional features will be added to the Advance Menu later" 10 78
-mainMenu
 }
 
 #*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
