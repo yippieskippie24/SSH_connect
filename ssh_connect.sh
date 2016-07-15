@@ -81,6 +81,8 @@ server10_port=
 customSERVER=""
 serverSELECTION=""
 portSELECTION=""
+userSELECTION=""
+advanceMenu_selection=""
 
 
 #Servers + descriptions Array
@@ -199,8 +201,39 @@ function SSH_connect() {
 #*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
 
 function advanceMenu() {
-whiptail --title "Advance Menu" --fb --msgbox "Additional features will be added to the Advance Menu later" 10 78
-mainMenu
+advanceMenu_selection=$(whiptail --title "Advance Menu" --fb --menu "Advanced Options:" 30 78 20\
+			"Auto Start" "Configure SSH Connect to start automatically" \
+			"Exit" "Exit Advance Menu" 3>&1 1>&2 2>&3)
+		if [ "$advanceMenu_selection" = "Auto Start" ]; then
+			AUTOSTART
+		elif [ "$advanceMenu_selection" = "Exit" ]; then
+			mainMenu	
+		fi
+
+
+
+}
+
+
+#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
+#                Configure SSH Connect to autostart                  #
+#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
+
+function AUTOSTART() {
+	if grep -Fxq "#_**_#" .bashrc; then
+		whiptail --title "Auto Start setup" --fb --msgbox "SSH Connect is already configured for Auto Start." 10 78
+		advanceMenu
+	else
+		echo "" >> ~/.bashrc
+		echo "" >> ~/.bashrc
+		echo "" >> ~/.bashrc
+		echo "#_**_#" >> ~/.bashrc
+		echo "#^^ that tag is used by the ssh_connect.sh script.  It should be located in your home directory" >> ~/.bashrc
+		echo "#Start ssh_connect.sh when a new shell starts" >> ~/.bashrc
+		echo "~/ssh_connect.sh" >> ~/.bashrc
+		whiptail --title "Auto Start setup" --fb --msgbox "SSH Connect will now start with every new bash Shell." 10 78
+		advanceMenu
+	fi
 }
 
 #*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*##*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#*#
