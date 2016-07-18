@@ -1,6 +1,6 @@
 #SSH_connect
 
-SSH_connect is a bash script that I've designed to assist you in quickly opening up SSH connections from a jumpbox to internal servers.
+SSH_connect is a bash script that I've designed to assist you in quickly opening up common SSH connections from a jumpbox to internal servers. it's designed to run when you connect to the jumpbox via SSH. 
 
 
 YOU --->  JUMPBOX ---> INTERNAL SERVERS
