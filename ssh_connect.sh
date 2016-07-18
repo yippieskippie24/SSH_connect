@@ -289,7 +289,6 @@ function START() {
 
     	runningINhome
 
->>>>>>> Added root check and running location
 }
 
 
