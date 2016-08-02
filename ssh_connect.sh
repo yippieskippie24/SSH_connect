@@ -187,10 +187,12 @@ function customServer() {
 
 function SSH_connect() {
 		if [ "$portSELECTION" = "22" ]; then
+			clear
 			echo connecting to $serverSELECTION...
 			ssh $serverSELECTION
 			mainMenu
 		else
+			clear
 			echo connecting to $serverSELECTION on port $portSELECTION...
 			ssh $serverSELECTION -p $portSELECTION
 			mainMenu
